@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Note</title>
+    <style>
+        label, textarea {
+            display: block;
+        }
+        textarea {
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+<div>
+    Note <br>
+    <label>
+        Title:
+        <input type="text" th:value="${title}" name="titleName" readonly>
+    </label>
+    <label>
+        Text
+        <textarea type="text" rows="30" cols="200" th:text="${text}" name="content" readonly></textarea>
+    </label>
+</div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <style>
+        label, textarea {
+            display: block;
+        }
+        textarea {
+            overflow: auto;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+        td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+User: <span th:text="${session.user.name}"></span>
+<form action="editNote" method="post">
+    <input type="hidden" value="null" name="noteId">
+    <input type="submit" value="Add note">
+</form>
+<table>
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="note: ${notes}">
+        <td><span th:text="${note.title}"/></td>
+        <td>
+            <form action="editNote" method="post">
+                <input type="hidden" th:value="${note.id}" name="noteId">
+                <input type="submit" value="Edit note">
+            </form>
+            <form action="deleteNote" method="post">
+                <input type="hidden" th:value="${note.id}" name="noteId">
+                <input type="submit" value="Delete note">
+            </form>
+            <form action="shareNote" method="post">
+                <input type="hidden" th:value="${note.id}" name="noteId">
+                <button type="submit">Share note</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
