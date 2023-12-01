@@ -27,12 +27,26 @@
     </style>
 </head>
 <body>
-User: <span th:text="${session.user.name}"></span>
+User: <span th:utext="${session.user.name}"></span>
+<div th:switch="${#lists.size(notes)}">
+    <div th:case="0">
+        <p>You don't have any notes yet. Add a new note!</p>
+    </div>
+    <div th:case="1">
+        <p>You have 1 note. Edit or delete it below:</p>
+    </div>
+    <div th:case="2">
+        <p>You have 2 notes. Manage them below:</p>
+    </div>
+    <div th:case="*">
+        <p>You have many notes. Explore and manage them below:</p>
+    </div>
+</div>
 <form action="editNote" method="post">
     <input type="hidden" value="null" name="noteId">
     <input type="submit" value="Add note">
 </form>
-<table>
+<table th:if="${#lists.size(notes) > 0}">
     <thead>
     <tr>
         <th>Title</th>
@@ -41,18 +55,18 @@ User: <span th:text="${session.user.name}"></span>
     </thead>
     <tbody>
     <tr th:each="note: ${notes}">
-        <td><span th:text="${note.title}"/></td>
+        <td><span th:utext="${note.title}"></span></td>
         <td>
             <form action="editNote" method="post">
-                <input type="hidden" th:value="${note.id}" name="noteId">
+                <input type="hidden" th:value="${note.id}" name="noteId" readonly="readonly">
                 <input type="submit" value="Edit note">
             </form>
-            <form action="deleteNote" method="post">
+            <form action="deleteNote" method="post" th:if="${#lists.size(notes) > 0}" th:attr="onsubmit='return confirm(\'Are you sure you want to delete ' + ${note.title} + '?\')'">
                 <input type="hidden" th:value="${note.id}" name="noteId">
                 <input type="submit" value="Delete note">
             </form>
             <form action="shareNote" method="post">
-                <input type="hidden" th:value="${note.id}" name="noteId">
+                <input type="hidden" th:value="${note.id}" name="noteId" readonly="readonly">
                 <button type="submit">Share note</button>
             </form>
         </td>

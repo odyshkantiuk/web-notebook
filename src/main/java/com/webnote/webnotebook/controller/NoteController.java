@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
@@ -55,10 +59,10 @@ public class NoteController {
             if (!note.getAuthor().equals(session.getAttribute("user"))) {
                 return "error";
             }
-            model.addAttribute("title", note.getTitle());
-            model.addAttribute("text", note.getContent());
+            model.addAttribute("title", HtmlUtils.htmlEscape(note.getTitle()));
+            model.addAttribute("text", HtmlUtils.htmlEscape(note.getContent()));
         }
-        model.addAttribute("noteId", noteId);
+        model.addAttribute("noteId", HtmlUtils.htmlEscape(noteId));
         return "note";
     }
 
@@ -107,7 +111,7 @@ public class NoteController {
             return "error";
         }
         String token = tokenGeneratorService.generateToken(noteId);
-        model.addAttribute("token", token);
+        model.addAttribute("token", HtmlUtils.htmlEscape(token));
         return "redirect:/share/" + token;
     }
 
@@ -115,8 +119,8 @@ public class NoteController {
     public String share(Model model, @PathVariable String token) {
         String noteId = tokenGeneratorService.getNoteId(token);
         Note note = noteService.get(noteId);
-        model.addAttribute("title", note.getTitle());
-        model.addAttribute("text", note.getContent());
+        model.addAttribute("title", HtmlUtils.htmlEscape(note.getTitle()));
+        model.addAttribute("text", HtmlUtils.htmlEscape(note.getContent()));
         return "share";
     }
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <title>Note</title>
     <style>
         label, textarea {
@@ -17,11 +17,11 @@
     Note <br>
     <label>
         Title:
-        <input type="text" th:value="${title}" name="titleName" readonly>
+        <input type="text" th:value="${title}" name="titleName" readonly="readonly">
     </label>
     <label>
         Text
-        <textarea type="text" rows="30" cols="200" th:text="${text}" name="content" readonly></textarea>
+        <textarea type="text" rows="30" cols="200" th:utext="${text}" name="content" readonly="readonly"></textarea>
     </label>
 </div>
 </body>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <title>Note</title>
     <style>
         label, textarea {
@@ -22,9 +22,9 @@
         </label>
         <label>
             Text
-            <textarea type="text" rows="30" cols="200" th:text="${text}" name="content"></textarea>
+            <textarea type="text" rows="30" cols="200" th:utext="${text}" name="content"></textarea>
         </label>
-        <input type="hidden" th:value="${noteId}" name="noteId">
+        <input type="hidden" th:value="${noteId}" name="noteId" readonly="readonly">
         <input type="submit" value="Save">
     </form>
 </div>
