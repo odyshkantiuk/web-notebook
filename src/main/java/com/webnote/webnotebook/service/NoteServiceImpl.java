@@ -23,17 +23,38 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
+    public List<Note> getAll(Integer page) {
+        List<Note> notes = noteDao.getAll();
+        int startIndex = (page - 1) * 10;
+        int endIndex = Math.min(page * 10, notes.size());
+        if (startIndex >= notes.size()) {
+            return notes;
+        }
+        return notes.subList(startIndex, endIndex);
+    }
+
+    @Override
     public List<Note> getAll(User user) {
         return noteDao.getAll(user);
     }
 
     @Override
-    public Note get(String id) {
-        return noteDao.get(Integer.parseInt(id));
+    public Note get(Integer id) {
+        return noteDao.get(id);
     }
 
     @Override
-    public void add(String title, String content, User user) {
+    public List<Note> get(String title) {
+        return noteDao.get(title);
+    }
+
+    @Override
+    public List<Note> get(String title, Integer id) {
+        return noteDao.get(title, id);
+    }
+
+    @Override
+    public void add(Note note) {
         List<Integer> noteIds = getAll().stream()
                 .map(Note::getId)
                 .filter(id -> id >= 0)
@@ -45,7 +66,7 @@ public class NoteServiceImpl implements NoteService {
                 break;
             }
         }
-        noteDao.add(new Note(id, title, content, user));
+        noteDao.add(new Note(id, note.getTitle(), note.getContent(), note.getAuthor()));
     }
 
     @Override
@@ -54,7 +75,7 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public void delete(String id) {
-        noteDao.delete(Integer.parseInt(id));
+    public void delete(Integer id) {
+        noteDao.delete(id);
     }
 }

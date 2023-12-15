@@ -23,6 +23,16 @@ public class NoteDaoImpl implements NoteDao {
     }
 
     @Override
+    public List<Note> get(String title) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Note> get(String title, Integer id) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void add(Note note) {
         throw new UnsupportedOperationException();
     }

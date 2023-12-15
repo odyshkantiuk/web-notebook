@@ -7,9 +7,12 @@ import java.util.List;
 
 public interface NoteService {
     List<Note> getAll();
+    List<Note> getAll(Integer page);
     List<Note> getAll(User user);
-    Note get(String id);
-    void add(String title, String content, User user);
+    Note get(Integer id);
+    List<Note> get(String title);
+    List<Note> get(String title, Integer id);
+    void add(Note note);
     void update(Note note);
-    void delete(String id);
+    void delete(Integer id);
 }

@@ -13,6 +13,12 @@ public class Note {
 
     }
 
+    public Note(String title, String content, User author) {
+        this.title = title;
+        this.content = content;
+        this.author = author;
+    }
+
     public Note(int id, String title, String content, User author) {
         this.id = id;
         this.title = title;

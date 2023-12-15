@@ -7,14 +7,15 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 @Primary
 public class NoteDaoFake implements NoteDao {
     private final List<Note> allNotes = new ArrayList<>(List.of(
-            new Note(0, "title0", "text0", new User("Oleksandr")),
-            new Note(2, "title2", "text2", new User("Oleksandr")),
-            new Note(1, "title1", "text1", new User("Vasyl"))
+            new Note(0, "title0", "text0", new User(0, "Oleksandr")),
+            new Note(2, "title2", "text2", new User(0, "Oleksandr")),
+            new Note(1, "title1", "text1", new User(1, "Vasyl"))
     ));
 
     @Override
@@ -26,7 +27,7 @@ public class NoteDaoFake implements NoteDao {
     public List<Note> getAll(User user) {
         List<Note> userNotes = new ArrayList<>();
         for (Note note : allNotes) {
-            if (note.getAuthor().equals(user)) {
+            if (note.getAuthor().getId() == user.getId()) {
                 userNotes.add(note);
             }
         }
@@ -39,6 +40,20 @@ public class NoteDaoFake implements NoteDao {
                 .filter(b -> b.getId() == id)
                 .findAny()
                 .orElseThrow(() -> null);
+    }
+
+    @Override
+    public List<Note> get(String title) {
+        return allNotes.stream()
+                .filter(note -> note.getTitle().contains(title))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Note> get(String title, Integer id) {
+        return allNotes.stream()
+                .filter(note -> note.getTitle().contains(title))
+                .collect(Collectors.toList());
     }
 
     @Override

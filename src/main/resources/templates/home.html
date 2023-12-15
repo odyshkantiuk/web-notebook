@@ -42,7 +42,7 @@ User: <span th:utext="${session.user.name}"></span>
         <p>You have many notes. Explore and manage them below:</p>
     </div>
 </div>
-<form action="editNote" method="post">
+<form action="edit" method="post">
     <input type="hidden" value="null" name="noteId">
     <input type="submit" value="Add note">
 </form>
@@ -57,15 +57,15 @@ User: <span th:utext="${session.user.name}"></span>
     <tr th:each="note: ${notes}">
         <td><span th:utext="${note.title}"></span></td>
         <td>
-            <form action="editNote" method="post">
+            <form action="edit" method="post">
                 <input type="hidden" th:value="${note.id}" name="noteId" readonly="readonly">
                 <input type="submit" value="Edit note">
             </form>
-            <form action="deleteNote" method="post" th:if="${#lists.size(notes) > 0}" th:attr="onsubmit='return confirm(\'Are you sure you want to delete ' + ${note.title} + '?\')'">
+            <form action="delete" method="post" th:attr="onsubmit='return confirm(\'Are you sure you want to delete ' + ${note.title} + '?\')'">
                 <input type="hidden" th:value="${note.id}" name="noteId">
                 <input type="submit" value="Delete note">
             </form>
-            <form action="shareNote" method="post">
+            <form action="share" method="post">
                 <input type="hidden" th:value="${note.id}" name="noteId" readonly="readonly">
                 <button type="submit">Share note</button>
             </form>

@@ -15,6 +15,11 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     @Override
+    public User get(int id) {
+        return userDao.get(id);
+    }
+
+    @Override
     public User login(String name, String password) {
         return userDao.get(name, password);
     }

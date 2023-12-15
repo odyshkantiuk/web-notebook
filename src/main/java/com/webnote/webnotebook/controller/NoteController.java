@@ -11,9 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
@@ -52,10 +49,10 @@ public class NoteController {
         return "home";
     }
 
-    @PostMapping("editNote")
-    public String editNote(Model model, @RequestParam String noteId) {
+    @PostMapping("edit")
+    public String edit(Model model, @RequestParam String noteId) {
         if (!noteId.equals("null")) {
-            Note note = noteService.get(noteId);
+            Note note = noteService.get(Integer.valueOf(noteId));
             if (!note.getAuthor().equals(session.getAttribute("user"))) {
                 return "error";
             }
@@ -66,12 +63,12 @@ public class NoteController {
         return "note";
     }
 
-    @RequestMapping("saveNote")
-    public String saveNote(@RequestParam String noteId, @RequestParam String titleName, @RequestParam String content) {
+    @RequestMapping("save")
+    public String save(@RequestParam String noteId, @RequestParam String titleName, @RequestParam String content) {
         User user = (User) session.getAttribute("user");
         Note note;
         if (!noteId.equals("null")) {
-            note = noteService.get(noteId);
+            note = noteService.get(Integer.valueOf(noteId));
             if (!note.getAuthor().equals(session.getAttribute("user"))) {
                 return "error";
             }
@@ -90,23 +87,23 @@ public class NoteController {
                 return "error";
             }
         }
-        noteService.add(titleName, content, user);
+        noteService.add(new Note(titleName, content, user));
         return "redirect:/home";
     }
 
-    @RequestMapping("deleteNote")
-    public String deleteNote(@RequestParam String noteId) {
-        Note note = noteService.get(noteId);
+    @RequestMapping("delete")
+    public String delete(@RequestParam String noteId) {
+        Note note = noteService.get(Integer.valueOf(noteId));
         if (!note.getAuthor().equals(session.getAttribute("user"))) {
             return "error";
         }
-        noteService.delete(noteId);
+        noteService.delete(Integer.valueOf(noteId));
         return "redirect:/home";
     }
 
-    @PostMapping("shareNote")
-    public String shareNote(@RequestParam String noteId, Model model) {
-        Note note = noteService.get(noteId);
+    @PostMapping("share")
+    public String share(@RequestParam String noteId, Model model) {
+        Note note = noteService.get(Integer.valueOf(noteId));
         if (!note.getAuthor().equals(session.getAttribute("user"))) {
             return "error";
         }
@@ -116,9 +113,9 @@ public class NoteController {
     }
 
     @GetMapping("share/{token}")
-    public String share(Model model, @PathVariable String token) {
+    public String sharedNote(Model model, @PathVariable String token) {
         String noteId = tokenGeneratorService.getNoteId(token);
-        Note note = noteService.get(noteId);
+        Note note = noteService.get(Integer.valueOf(noteId));
         model.addAttribute("title", HtmlUtils.htmlEscape(note.getTitle()));
         model.addAttribute("text", HtmlUtils.htmlEscape(note.getContent()));
         return "share";

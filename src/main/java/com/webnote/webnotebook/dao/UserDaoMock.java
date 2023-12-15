@@ -13,9 +13,15 @@ public class UserDaoMock {
     @Scope("singleton")
     public UserDao userDao() {
         UserDao userDao = mock(UserDao.class);
-        when(userDao.get("name1", "password")).thenReturn(new User("Oleksandr"));
-        when(userDao.get("name2", "password")).thenReturn(new User("Vasyl"));
-        when(userDao.get("name3", "password")).thenReturn(new User("Vadim"));
+        User oleksandr = new User(0, "Oleksandr");
+        User vasyl = new User(1, "Vasyl");
+        User vadim = new User(2, "Vadim");
+        when(userDao.get("name1", "password")).thenReturn(oleksandr);
+        when(userDao.get("name2", "password")).thenReturn(vasyl);
+        when(userDao.get("name3", "password")).thenReturn(vadim);
+        when(userDao.get(0)).thenReturn(oleksandr);
+        when(userDao.get(1)).thenReturn(vasyl);
+        when(userDao.get(2)).thenReturn(vadim);
         return userDao;
     }
 }
