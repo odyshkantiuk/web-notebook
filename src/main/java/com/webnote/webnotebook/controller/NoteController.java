@@ -2,7 +2,7 @@ package com.webnote.webnotebook.controller;
 
 import com.webnote.webnotebook.dao.entity.Note;
 import com.webnote.webnotebook.dao.entity.User;
-import com.webnote.webnotebook.service.AuthorizationService;
+import com.webnote.webnotebook.service.UserService;
 import com.webnote.webnotebook.service.NoteService;
 import com.webnote.webnotebook.service.TokenGeneratorService;
 import jakarta.servlet.http.HttpSession;
@@ -16,14 +16,14 @@ import java.util.List;
 
 @Controller
 public class NoteController {
-    private final AuthorizationService authorizationService;
+    private final UserService userService;
     private final HttpSession session;
     private final NoteService noteService;
     private final TokenGeneratorService tokenGeneratorService;
 
     @Autowired
-    public NoteController(AuthorizationService authorizationService, HttpSession session, NoteService noteService, TokenGeneratorService tokenGeneratorService) {
-        this.authorizationService = authorizationService;
+    public NoteController(UserService userService, HttpSession session, NoteService noteService, TokenGeneratorService tokenGeneratorService) {
+        this.userService = userService;
         this.session = session;
         this.noteService = noteService;
         this.tokenGeneratorService = tokenGeneratorService;
@@ -36,7 +36,7 @@ public class NoteController {
 
     @RequestMapping("login")
     public String login(@RequestParam String login, @RequestParam String password) {
-        User user = authorizationService.login(login, password);
+        User user = userService.login(login, password);
         if (user == null) return "no-such-user";
         session.setAttribute("user", user);
         return "redirect:/home";

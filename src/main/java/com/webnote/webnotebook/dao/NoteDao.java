@@ -10,7 +10,6 @@ public interface NoteDao {
     List<Note> getAll(User user);
     Note get(int id);
     List<Note> get(String title);
-    List<Note> get(String title, Integer id);
     void add(Note note);
     void update(Note note);
     void delete(int id);

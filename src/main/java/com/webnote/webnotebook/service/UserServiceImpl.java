@@ -5,13 +5,20 @@ import com.webnote.webnotebook.dao.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class AuthorizationServiceImpl implements AuthorizationService {
+public class UserServiceImpl implements UserService {
     private final UserDao userDao;
 
     @Autowired
-    public AuthorizationServiceImpl(UserDao userDao) {
+    public UserServiceImpl(UserDao userDao) {
         this.userDao = userDao;
+    }
+
+    @Override
+    public List<User> getAll() {
+        return userDao.getAll();
     }
 
     @Override
@@ -22,5 +29,20 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     @Override
     public User login(String name, String password) {
         return userDao.get(name, password);
+    }
+
+    @Override
+    public void add(User user) {
+        userDao.add(user);
+    }
+
+    @Override
+    public void update(User user) {
+        userDao.update(user);
+    }
+
+    @Override
+    public void delete(int id) {
+        userDao.delete(id);
     }
 }

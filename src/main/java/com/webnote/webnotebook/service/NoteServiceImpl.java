@@ -5,6 +5,7 @@ import com.webnote.webnotebook.dao.entity.Note;
 import com.webnote.webnotebook.dao.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -48,25 +49,16 @@ public class NoteServiceImpl implements NoteService {
         return noteDao.get(title);
     }
 
-    @Override
-    public List<Note> get(String title, Integer id) {
-        return noteDao.get(title, id);
+    @Transactional
+    public void addAndUpdate(Integer id, Note note) {
+        noteDao.add(note);
+        note.setId(id);
+        noteDao.update(note);
     }
 
     @Override
     public void add(Note note) {
-        List<Integer> noteIds = getAll().stream()
-                .map(Note::getId)
-                .filter(id -> id >= 0)
-                .toList();
-        int id = -1;
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            if (!noteIds.contains(i)) {
-                id = i;
-                break;
-            }
-        }
-        noteDao.add(new Note(id, note.getTitle(), note.getContent(), note.getAuthor()));
+        noteDao.add(note);
     }
 
     @Override

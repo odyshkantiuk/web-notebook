@@ -11,7 +11,7 @@ public interface NoteService {
     List<Note> getAll(User user);
     Note get(Integer id);
     List<Note> get(String title);
-    List<Note> get(String title, Integer id);
+    void addAndUpdate(Integer id, Note note);
     void add(Note note);
     void update(Note note);
     void delete(Integer id);

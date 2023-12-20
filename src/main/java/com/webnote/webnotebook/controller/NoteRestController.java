@@ -1,7 +1,7 @@
 package com.webnote.webnotebook.controller;
 
 import com.webnote.webnotebook.dao.entity.Note;
-import com.webnote.webnotebook.service.AuthorizationService;
+import com.webnote.webnotebook.service.UserService;
 import com.webnote.webnotebook.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +12,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/notes")
-public class FrontController {
-    private final AuthorizationService authorizationService;
+public class NoteRestController {
+    private final UserService userService;
     private final NoteService noteService;
 
     @Autowired
-    public FrontController(AuthorizationService authorizationService, NoteService noteService) {
-        this.authorizationService = authorizationService;
+    public NoteRestController(UserService userService, NoteService noteService) {
+        this.userService = userService;
         this.noteService = noteService;
     }
 
@@ -36,7 +36,7 @@ public class FrontController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<List<Note>> getAllByUser(@PathVariable Integer userId) {
-        List<Note> notes = noteService.getAll(authorizationService.get(userId));
+        List<Note> notes = noteService.getAll(userService.get(userId));
         if (notes.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -65,6 +65,12 @@ public class FrontController {
     public ResponseEntity<String> add(@RequestBody Note note) {
         noteService.add(note);
         return ResponseEntity.ok("Note added successfully");
+    }
+
+    @PutMapping("/addupdate/{noteId}")
+    public ResponseEntity<String> addAndUpdate(@PathVariable Integer noteId, @RequestBody Note note) {
+        noteService.addAndUpdate(noteId, note);
+        return ResponseEntity.ok("Notes swapped places successfully");
     }
 
     @PutMapping("/{noteId}")
