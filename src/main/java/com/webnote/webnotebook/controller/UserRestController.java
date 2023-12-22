@@ -24,38 +24,56 @@ public class UserRestController {
         return ResponseEntity.ok(users);
     }
 
+    @GetMapping("/name")
+    public ResponseEntity<User> get(@RequestParam String name) {
+        User user = userService.get(name);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/password")
+    public ResponseEntity<User> getByPassword(@RequestParam String password) {
+        User user = userService.getByPassword(password);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(user);
+    }
+
     @PostMapping
-    public ResponseEntity<String> add(@RequestBody User user) {
+    public ResponseEntity<User> add(@RequestBody User user) {
         for (User name : userService.getAll()) {
             if (user.getName().equals(name.getName())) {
                 return ResponseEntity.badRequest().build();
             }
         }
         userService.add(user);
-        return ResponseEntity.ok("User added successfully");
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<String> update(@PathVariable Integer userId, @RequestBody User user) {
+    public ResponseEntity<User> update(@PathVariable Integer userId, @RequestBody User user) {
         for (User name : userService.getAll()) {
             if (user.getName().equals(name.getName())) {
                 return ResponseEntity.badRequest().build();
             }
         }
-        if (userService.get(userId) == null) {
+        if (userService.get(userId).isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         user.setId(userId);
         userService.update(user);
-        return ResponseEntity.ok("User updated successfully");
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<String> delete(@PathVariable Integer userId) {
-        if (userService.get(userId) == null) {
+    public ResponseEntity<Integer> delete(@PathVariable Integer userId) {
+        if (userService.get(userId).isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         userService.delete(userId);
-        return ResponseEntity.ok("User deleted successfully");
+        return ResponseEntity.ok(userId);
     }
 }

@@ -1,6 +1,7 @@
 package com.webnote.webnotebook.controller;
 
 import com.webnote.webnotebook.dao.entity.Note;
+import com.webnote.webnotebook.dao.entity.User;
 import com.webnote.webnotebook.service.UserService;
 import com.webnote.webnotebook.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -36,17 +38,23 @@ public class NoteRestController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<List<Note>> getAllByUser(@PathVariable Integer userId) {
-        List<Note> notes = noteService.getAll(userService.get(userId));
-        if (notes.isEmpty()) {
+        Optional<User> userOptional = userService.get(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            List<Note> notes = noteService.getAll(user);
+            if (notes.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(notes);
+        } else {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(notes);
     }
 
     @GetMapping("/note/{noteId}")
-    public ResponseEntity<Note> get(@PathVariable Integer noteId) {
-        Note note = noteService.get(noteId);
-        if (note == null) {
+    public ResponseEntity<Optional<Note>> get(@PathVariable Integer noteId) {
+        Optional<Note> note = noteService.get(noteId);
+        if (note.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(note);
@@ -62,33 +70,33 @@ public class NoteRestController {
     }
 
     @PostMapping
-    public ResponseEntity<String> add(@RequestBody Note note) {
+    public ResponseEntity<Note> add(@RequestBody Note note) {
         noteService.add(note);
-        return ResponseEntity.ok("Note added successfully");
+        return ResponseEntity.ok(note);
     }
 
     @PutMapping("/addupdate/{noteId}")
-    public ResponseEntity<String> addAndUpdate(@PathVariable Integer noteId, @RequestBody Note note) {
+    public ResponseEntity<Note> addAndUpdate(@PathVariable Integer noteId, @RequestBody Note note) {
         noteService.addAndUpdate(noteId, note);
-        return ResponseEntity.ok("Notes swapped places successfully");
+        return ResponseEntity.ok(note);
     }
 
     @PutMapping("/{noteId}")
-    public ResponseEntity<String> update(@PathVariable Integer noteId, @RequestBody Note note) {
-        if (noteService.get(noteId) == null) {
+    public ResponseEntity<Note> update(@PathVariable Integer noteId, @RequestBody Note note) {
+        if (noteService.get(noteId).isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         note.setId(noteId);
         noteService.update(note);
-        return ResponseEntity.ok("Note updated successfully");
+        return ResponseEntity.ok(note);
     }
 
     @DeleteMapping("/{noteId}")
-    public ResponseEntity<String> delete(@PathVariable Integer noteId) {
-        if (noteService.get(noteId) == null) {
+    public ResponseEntity<Integer> delete(@PathVariable Integer noteId) {
+        if (noteService.get(noteId).isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         noteService.delete(noteId);
-        return ResponseEntity.ok("Note deleted successfully");
+        return ResponseEntity.ok(noteId);
     }
 }

@@ -4,12 +4,13 @@ import com.webnote.webnotebook.dao.entity.Note;
 import com.webnote.webnotebook.dao.entity.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface NoteService {
     List<Note> getAll();
     List<Note> getAll(Integer page);
     List<Note> getAll(User user);
-    Note get(Integer id);
+    Optional<Note> get(Integer id);
     List<Note> get(String title);
     void addAndUpdate(Integer id, Note note);
     void add(Note note);

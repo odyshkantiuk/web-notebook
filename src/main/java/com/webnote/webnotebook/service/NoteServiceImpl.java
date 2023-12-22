@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class NoteServiceImpl implements NoteService {
@@ -20,12 +21,12 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public List<Note> getAll() {
-        return noteDao.getAll();
+        return (List<Note>) noteDao.findAll();
     }
 
     @Override
     public List<Note> getAll(Integer page) {
-        List<Note> notes = noteDao.getAll();
+        List<Note> notes = (List<Note>) noteDao.findAll();
         int startIndex = (page - 1) * 10;
         int endIndex = Math.min(page * 10, notes.size());
         if (startIndex >= notes.size()) {
@@ -36,38 +37,46 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public List<Note> getAll(User user) {
-        return noteDao.getAll(user);
+        return noteDao.findAllByUserId(user.getId());
     }
 
     @Override
-    public Note get(Integer id) {
-        return noteDao.get(id);
+    public Optional<Note> get(Integer id) {
+        return noteDao.findById(id);
     }
 
     @Override
     public List<Note> get(String title) {
-        return noteDao.get(title);
+        return noteDao.findByTitleContaining(title);
     }
 
     @Transactional
     public void addAndUpdate(Integer id, Note note) {
-        noteDao.add(note);
+        noteDao.save(note);
         note.setId(id);
-        noteDao.update(note);
+        if (noteDao.existsById(note.getId())) {
+            noteDao.save(note);
+        } else {
+            throw new RuntimeException("Note with id " + note.getId() + " not found");
+        }
     }
 
     @Override
     public void add(Note note) {
-        noteDao.add(note);
+        noteDao.save(note);
     }
 
     @Override
     public void update(Note note) {
-        noteDao.update(note);
+        if (noteDao.existsById(note.getId())) {
+            noteDao.save(note);
+        } else {
+            throw new RuntimeException("Note with id " + note.getId() + " not found");
+        }
     }
 
     @Override
     public void delete(Integer id) {
-        noteDao.delete(id);
+        noteDao.deleteById(id);
     }
 }

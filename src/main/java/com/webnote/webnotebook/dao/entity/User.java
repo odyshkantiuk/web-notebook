@@ -1,15 +1,29 @@
 package com.webnote.webnotebook.dao.entity;
 
+import jakarta.persistence.*;
+
 import java.util.Objects;
 
+@Entity
+@Table(name = "users")
+@NamedQuery(name = "User.findByPassword", query = "SELECT n FROM User n WHERE n.password = :password")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_generator")
+    @SequenceGenerator(name = "users_generator", sequenceName = "users_seq", allocationSize = 1)
     private int id;
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
     private String password;
 
     public User() {
 
 
+    }
+
+    public User(int id) {
+        this.id = id;
     }
 
     public User(String name, String password) {

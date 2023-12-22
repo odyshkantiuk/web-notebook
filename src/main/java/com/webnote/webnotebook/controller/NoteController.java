@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class NoteController {
@@ -52,12 +53,16 @@ public class NoteController {
     @PostMapping("edit")
     public String edit(Model model, @RequestParam String noteId) {
         if (!noteId.equals("null")) {
-            Note note = noteService.get(Integer.valueOf(noteId));
-            if (!note.getAuthor().equals(session.getAttribute("user"))) {
+            Optional<Note> note = noteService.get(Integer.valueOf(noteId));
+            if (note.isPresent()) {
+                if (!note.get().getAuthor().equals(session.getAttribute("user"))) {
+                    return "error";
+                }
+                model.addAttribute("title", HtmlUtils.htmlEscape(note.get().getTitle()));
+                model.addAttribute("text", HtmlUtils.htmlEscape(note.get().getContent()));
+            } else {
                 return "error";
             }
-            model.addAttribute("title", HtmlUtils.htmlEscape(note.getTitle()));
-            model.addAttribute("text", HtmlUtils.htmlEscape(note.getContent()));
         }
         model.addAttribute("noteId", HtmlUtils.htmlEscape(noteId));
         return "note";
@@ -66,21 +71,25 @@ public class NoteController {
     @RequestMapping("save")
     public String save(@RequestParam String noteId, @RequestParam String titleName, @RequestParam String content) {
         User user = (User) session.getAttribute("user");
-        Note note;
+        Optional<Note> note;
         if (!noteId.equals("null")) {
             note = noteService.get(Integer.valueOf(noteId));
-            if (!note.getAuthor().equals(session.getAttribute("user"))) {
-                return "error";
-            }
-            for (Note notebook : noteService.getAll((User) session.getAttribute("user"))) {
-                if (notebook.getTitle().equals(titleName) && Integer.parseInt(noteId) != notebook.getId()) {
+            if (note.isPresent()) {
+                if (!note.get().getAuthor().equals(session.getAttribute("user"))) {
                     return "error";
                 }
+                for (Note notebook : noteService.getAll((User) session.getAttribute("user"))) {
+                    if (notebook.getTitle().equals(titleName) && Integer.parseInt(noteId) != notebook.getId()) {
+                        return "error";
+                    }
+                }
+                note.get().setTitle(titleName);
+                note.get().setContent(content);
+                noteService.update(note.get());
+                return "redirect:/home";
+            } else {
+                return "error";
             }
-            note.setTitle(titleName);
-            note.setContent(content);
-            noteService.update(note);
-            return "redirect:/home";
         }
         for (Note notebook : noteService.getAll(user)) {
             if (notebook.getTitle().equals(titleName)) {
@@ -93,8 +102,12 @@ public class NoteController {
 
     @RequestMapping("delete")
     public String delete(@RequestParam String noteId) {
-        Note note = noteService.get(Integer.valueOf(noteId));
-        if (!note.getAuthor().equals(session.getAttribute("user"))) {
+        Optional<Note> note = noteService.get(Integer.valueOf(noteId));
+        if (note.isPresent()) {
+            if (!note.get().getAuthor().equals(session.getAttribute("user"))) {
+                return "error";
+            }
+        } else {
             return "error";
         }
         noteService.delete(Integer.valueOf(noteId));
@@ -103,8 +116,12 @@ public class NoteController {
 
     @PostMapping("share")
     public String share(@RequestParam String noteId, Model model) {
-        Note note = noteService.get(Integer.valueOf(noteId));
-        if (!note.getAuthor().equals(session.getAttribute("user"))) {
+        Optional<Note> note = noteService.get(Integer.valueOf(noteId));
+        if (note.isPresent()) {
+            if (!note.get().getAuthor().equals(session.getAttribute("user"))) {
+                return "error";
+            }
+        } else {
             return "error";
         }
         String token = tokenGeneratorService.generateToken(noteId);
@@ -115,9 +132,13 @@ public class NoteController {
     @GetMapping("share/{token}")
     public String sharedNote(Model model, @PathVariable String token) {
         String noteId = tokenGeneratorService.getNoteId(token);
-        Note note = noteService.get(Integer.valueOf(noteId));
-        model.addAttribute("title", HtmlUtils.htmlEscape(note.getTitle()));
-        model.addAttribute("text", HtmlUtils.htmlEscape(note.getContent()));
+        Optional<Note> note = noteService.get(Integer.valueOf(noteId));
+        if (note.isPresent()) {
+            model.addAttribute("title", HtmlUtils.htmlEscape(note.get().getTitle()));
+            model.addAttribute("text", HtmlUtils.htmlEscape(note.get().getContent()));
+        } else {
+            return "error";
+        }
         return "share";
     }
 }

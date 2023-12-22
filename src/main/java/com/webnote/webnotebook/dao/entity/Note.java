@@ -1,11 +1,25 @@
 package com.webnote.webnotebook.dao.entity;
 
+import jakarta.persistence.*;
+
 import java.util.Objects;
 
+@Entity
+@Table(name = "notes")
 public class Note {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notes_generator")
+    @SequenceGenerator(name = "notes_generator", sequenceName = "notes_seq", allocationSize = 1)
     private int id;
+
+    @Column(nullable = false)
     private String title;
+
+    @Column
     private String content;
+
+    @ManyToOne
+    @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
     public Note() {

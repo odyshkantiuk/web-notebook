@@ -1,14 +1,9 @@
 package com.webnote.webnotebook.dao;
 
 import com.webnote.webnotebook.dao.entity.User;
+import org.springframework.data.repository.CrudRepository;
 
-import java.util.List;
-
-public interface UserDao {
-    List<User> getAll();
-    User get(int id);
-    User get(String name, String password);
-    void add(User user);
-    void update(User user);
-    void delete(int id);
+public interface UserDao extends CrudRepository<User, Integer> {
+    User findByName(String name);
+    User findByPassword(String password);
 }
